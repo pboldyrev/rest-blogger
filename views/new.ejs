@@ -1,0 +1,24 @@
+<%- include("partials/header") %>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <form class="col-lg-6" action="/blogs" method="POST">
+      <div class="form-group">
+        <label for="title">Blog Title</label>
+        <input id="title" name="title" class="form-control">
+        <small class="form-text text-muted">What inspires you in the world?</small>
+      </div>
+      <div class="form-group">
+        <label for="url">Image URL</label>
+        <input id="url" name="url" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="body">Blog Body</label>
+        <textarea id="body" name="body" class="form-control" rows="4"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit blog</button>
+    </form>
+  </div>
+</div>
+
+<%- include("partials/footer") %>
