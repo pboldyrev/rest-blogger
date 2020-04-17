@@ -33,9 +33,11 @@
     </div>
     <% }); %>
   </div>
+  <% if(user){ %>
   <div class="container text-center my-5">
     <a href="/blogs/new" class="btn btn-primary btn-lg">Write a new blog</a>
   </div>
+  <% } %>
 </div>
 
 <%- include("partials/footer") %>

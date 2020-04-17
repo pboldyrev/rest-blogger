@@ -9,8 +9,10 @@
       <p><strong>Written on:</strong> <%= blog[0].created.toDateString() %></p>
       <form action="/blogs/<%= blog[0]._id %>?_method=DELETE" method="POST">
         <a href="/blogs" class="btn btn-primary">Go back</a>
-        <a href="/blogs/<%= blog[0]._id %>/edit" class="btn btn-secondary">Edit</a>
-        <button class="btn btn-danger">Delete</button>
+        <% if(user){ %>
+          <a href="/blogs/<%= blog[0]._id %>/edit" class="btn btn-secondary">Edit</a>
+          <button class="btn btn-danger">Delete</button>
+        <% } %>
       </form>
     </div>
     <div class="col-lg-8 p-3">
@@ -18,7 +20,7 @@
         <div class="row">
           <div class="col-md-12">
             <strong><%= comment.author %></strong>
-            <span class="float-right">10 days</span>
+            <span class="float-right">10 days ago</span>
             <p>
               <%= comment.body %>
             </p>
@@ -26,7 +28,9 @@
           </div>
         </div>
       <% }); %>
-      <a href="/blogs/<%= blog[0]._id %>/comments/new" class="mb-4 mt-2 btn btn-primary">Add Comment</a>
+      <% if(user){ %>
+        <a href="/blogs/<%= blog[0]._id %>/comments/new" class="mb-4 mt-2 btn btn-primary">Add Comment</a>
+      <% } %>
     </div>
   </div>
 </div>
