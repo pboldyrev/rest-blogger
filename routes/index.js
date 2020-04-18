@@ -18,14 +18,13 @@ router.get("/register", function(req, res){
 router.post("/register", function(req, res){
   var newUser = new User({
     username: req.body.username,
-    email: req.body.Email
   });
 
   User.register(newUser, req.body.password, function(err, user){
     if(err){
       console.log(err);
-      req.flash("error", "Something went wrong..");
-      res.render("/register");
+      req.flash("error", err.message);
+      res.render("auth/register");
     } else {
         passport.authenticate("local")(req, res, function(){
           req.flash("success", "You have been registered. Welcome, " + user.username + "!");
@@ -43,7 +42,7 @@ router.get("/login", function(req, res){
 // Login route
 router.post("/login", passport.authenticate("local", {
   successRedirect: "/blogs",
-  failureRedirect: "/login"
+  failureRedirect: "auth/login"
 }), function(req, res){
 });
 
