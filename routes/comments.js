@@ -1,14 +1,16 @@
 var express = require("express"),
     router  = express.Router({mergeParams: true}),
     Blog    = require("../models/blogs"),
-    middleware  = require("../middleware"),
-    Comment = require("../models/comments");
+    Comment = require("../models/comments"),
+    middleware  = require("../middleware");
 
 // Adding a comment page
 router.get("/new", middleware.isLoggedIn, function(req, res){
   Blog.findById(req.params.id, function(err, blog){
     if(err){
       console.log(err);
+      req.flash("error", "This blog does not exist.");
+      res.redirect("./blogs");
     } else {
       res.render("./comments/new", {blog: blog});
     }
@@ -20,6 +22,8 @@ router.get("/:comment_id/edit", middleware.checkCommentOwnership, function(req, 
   Comment.findById(req.params.comment_id, function(err, comment){
     if(err){
       console.log(err);
+      req.flash("error", "This comment does not exist.");
+      res.redirect("./blogs");
     } else {
       res.render("./comments/edit", {comment: comment, blog_id: req.params.id});
     }
@@ -39,7 +43,10 @@ router.put("/:comment_id", middleware.checkCommentOwnership, function(req, res){
   Comment.findByIdAndUpdate(req.params.comment_id, newComment, function(err, comment){
     if(err){
       console.log(err);
+      req.flash("error", "This comment does not exist.");
+      res.redirect("/blogs/" + req.params.id);
     } else {
+      req.flash("success", "The comment has been updated.");
       res.redirect("/blogs/" + req.params.id);
     }
   });
@@ -50,8 +57,11 @@ router.delete("/:comment_id", middleware.checkCommentOwnership, function(req, re
   Comment.findById(req.params.comment_id, function(err, comment){
     if(err){
       console.log(err);
+      req.flash("error", "This comment does not exist.");
+      res.redirect("/blogs/" + req.params.id);
     } else {
       comment.remove();
+      req.flash("success", "The comment has been deleted.");
       res.redirect("/blogs/" + req.params.id);
     }
   });
@@ -62,18 +72,23 @@ router.post("/", middleware.isLoggedIn, function(req, res){
   Blog.findById(req.params.id).populate("comments").exec(function(err, blog){
     if(err){
       console.log(err);
+      req.flash("error", "This blog does not exist.");
+      res.redirect("/blogs");
     } else {
       Comment.create(req.body.comment, function(err, comment){
         if(err){
           console.log(err);
+          req.flash("error", "Something went wrong..");
+          res.redirect("/blogs/" + blog._id);
         } else {
           comment.author.id = req.user._id;
           comment.author.username = req.user.username;
-          comment.body = req.body.body;
+          comment.body = req.sanitize(req.body.body);
           comment.save();
-
           blog.comments.push(comment);
           blog.save();
+
+          req.flash("success", "Your comment has been posted.");
           res.redirect("/blogs/" + blog._id);
         }
       });

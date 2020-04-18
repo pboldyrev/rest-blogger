@@ -1,8 +1,8 @@
 var express     = require("express"),
     router      = express.Router(),
-    middleware  = require("../middleware"),
     Blog        = require("../models/blogs"),
-    Comment     = require("../models/comments");
+    Comment     = require("../models/comments"),
+    middleware  = require("../middleware");
 
 // Show all blogs
 router.get("/", function(req, res){
@@ -50,7 +50,10 @@ router.post("/", middleware.isLoggedIn, function(req, res){
   Blog.create(newBlog, function(err, blog){
     if(err){
       console.log(err);
+      req.flash("error", "Something went wrong..");
+      res.send("/blogs");
     } else {
+      req.flash("success", "Your blog has been created.");
       res.redirect("/blogs");
     }
   })
@@ -79,8 +82,10 @@ router.put("/:id", middleware.checkBlogOwnership, function(req, res){
 
   Blog.findByIdAndUpdate(req.params.id, updatedBlog, function(err, updatedBlog){
     if(err){
+      req.flash("error", "This blog does not exist.");
       res.redirect("back");
     } else {
+      req.flash("success", "Your blog has been edited.");
       res.redirect("/blogs/" + req.params.id);
     }
   });
@@ -91,11 +96,16 @@ router.delete("/:id", middleware.checkBlogOwnership, function(req, res){
   Blog.findByIdAndRemove(req.params.id, function(err, removedBlog){
     if(err){
       console.log(err);
+      req.flash("error", "This blog does not exist.");
+      res.redirect("/blogs")
     } else {
       Comment.deleteMany({_id: {$in: removedBlog.comments}}, function(err){
         if(err){
           console.log(err);
+          req.flash("error", "Something went wrong..");
+          res.redirect("/blogs");
         } else {
+          req.flash("success", "Your blog has been deleted.");
           res.redirect("/blogs");
         }
       });

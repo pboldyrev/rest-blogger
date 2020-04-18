@@ -1,3 +1,6 @@
+var Blog    = require("../models/blogs"),
+    Comment = require("../models/comments");
+
 var middlewareObj = {};
 
 // Check if user is authenticated for blog
@@ -24,16 +27,19 @@ middlewareObj.checkCommentOwnership = function(req, res, next){
   if(req.isAuthenticated()){
     Comment.findById(req.params.comment_id, function(err, comment){
       if(err){
+        req.flash("error", "This comment does not exist.");
         res.redirect("back");
       } else {
-        if(blog.author.id.equals(req.user._id)){
+        if(comment.author.id.equals(req.user._id)){
           next();
         } else {
+          req.flash("error", "You must be the author to do that.");
           res.redirect("/blogs/" + req.params.id);
         }
       }
     });
   } else {
+    req.flash("error", "You must be logged in to do that.");
     res.redirect("/login");
   }
 }
@@ -43,6 +49,7 @@ middlewareObj.isLoggedIn = function(req, res, next){
   if(req.isAuthenticated()){
     return next();
   } else {
+    req.flash("error", "You must be logged in to do that.");
     res.redirect("/login");
   }
 }
