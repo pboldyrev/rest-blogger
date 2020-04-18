@@ -25,6 +25,8 @@ router.get("/:id", function(req, res){
   Blog.findById(req.params.id).populate("comments").exec(function(err, blog){
     if(err){
       console.log(err);
+      req.flash("error", "This blog doesn't exist.");
+      res.redirect("/");
     } else {
       res.render("blogs/blog", {blog: blog});
     }

@@ -56,3 +56,9 @@ app.use(indexRoutes);
 app.use("/blogs", blogRoutes);
 app.use("/blogs/:id/comments",commentRoutes);
 //
+
+// Catch all other calls
+app.get("*", function(req, res){
+  res.render("./other/404");
+});
+//

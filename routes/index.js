@@ -36,13 +36,14 @@ router.post("/register", function(req, res){
 
 // Login page
 router.get("/login", function(req, res){
-  res.render("auth/login");
+  res.render("./auth/login");
 });
 
 // Login route
 router.post("/login", passport.authenticate("local", {
   successRedirect: "/blogs",
-  failureRedirect: "auth/login"
+  failureRedirect: "/login",
+  failureFlash: true
 }), function(req, res){
 });
 
@@ -51,6 +52,6 @@ router.get("/logout", function(req, res){
   req.logout();
   req.flash("success", "You were successfully logged out!");
   res.redirect("/blogs");
-})
+});
 
 module.exports = router;
