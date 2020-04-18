@@ -15,7 +15,7 @@ var indexRoutes       = require("./routes/index"),
     blogRoutes        = require("./routes/blogs"),
     commentRoutes     = require("./routes/comments");
 
-mongoose.connect("mongodb+srv://"+process.argv[2] + ":" + process.argv[3] + "@udemy-rxyvm.azure.mongodb.net/blog_app", {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect("mongodb+srv://"+process.argv[2] + ":" + process.argv[3] + "@udemy-rxyvm.azure.mongodb.net/blog_app", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 
 // APP SET UP
 app.set("view engine", "ejs");

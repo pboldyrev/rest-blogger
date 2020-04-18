@@ -16,23 +16,22 @@ router.get("/comments/new", isLoggedIn, function(req, res){
 
 // Adding a comment route
 router.post("/", isLoggedIn, function(req, res){
-  var id = req.params.id;
-  var newComment = {
-    author: req.user.username,
-    body: req.body.body
-  }
-
-  Blog.findById(id).populate("comments").exec(function(err, blog){
+  Blog.findById(req.params.id).populate("comments").exec(function(err, blog){
     if(err){
       console.log(err);
     } else {
-      Comment.create(newComment, function(err, comment){
+      Comment.create(req.body.comment, function(err, comment){
         if(err){
           console.log(err);
         } else {
+          comment.author.id = req.user._id;
+          comment.author.username = req.user.username;
+          comment.body = req.body.body;
+          comment.save();
+
           blog.comments.push(comment);
           blog.save();
-          res.redirect("/blogs/" + id);
+          res.redirect("/blogs/" + blog._id);
         }
       });
     }

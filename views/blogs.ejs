@@ -24,7 +24,8 @@
               <% } else {%>
                   <p><%= body %></p>
               <% } %>
-              <p>Written on: <%= blog.created.toDateString() %></p>
+              <p class="my-0">Written on: <%= blog.created.toDateString() %></p>
+              <p class="mt-0">By: <%= blog.author.username %></p>
               <a href="/blogs/<%=blog._id %>" class="btn btn-primary">Read More</a>
             </div>
           </div>

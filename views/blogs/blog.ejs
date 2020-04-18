@@ -6,7 +6,8 @@
       <img src="<%= blog.image %>" alt="" width="100%">
       <h3 class="pt-4"><%= blog.title %></h3>
       <p><%= blog.body %></p>
-      <p><strong>Written on:</strong> <%= blog.created.toDateString() %></p>
+      <p class="my-0"><strong>Written on:</strong> <%= blog.created.toDateString() %></p>
+      <p class="mt-0"><strong>Written by:</strong> <%= blog.author.username %></p>
       <form action="/blogs/<%= blog._id %>?_method=DELETE" method="POST">
         <a href="/blogs" class="btn btn-primary">Go back</a>
         <% if(user){ %>
@@ -19,7 +20,7 @@
       <% blog.comments.forEach(function(comment){ %>
         <div class="row">
           <div class="col-md-12">
-            <strong><%= comment.author %></strong>
+            <strong><%= comment.author.username %></strong>
             <span class="float-right">10 days ago</span>
             <p>
               <%= comment.body %>

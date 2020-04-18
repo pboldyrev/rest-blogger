@@ -31,12 +31,15 @@ router.get("/:id", function(req, res){
 
 // Creating a blog route
 router.post("/", isLoggedIn, function(req, res){
-  title = req.sanitize(req.body.title);
-  body = req.sanitize(req.body.body);
-  var newBlog = {
-    title: title,
-    body: body
-  }
+
+  var author = {
+    id: req.user._id,
+    username: req.user.username
+  };
+  var title = req.sanitize(req.body.title);
+  var body = req.sanitize(req.body.body);
+
+  var newBlog = {title: title, body: body, author: author};
 
   if(req.body.url !== ""){
     newBlog["image"] = req.body.url;
@@ -53,7 +56,7 @@ router.post("/", isLoggedIn, function(req, res){
 
 // Blog edit page
 router.get("/:id/edit", isLoggedIn, function(req, res){
-  Blog.findById(reeq.params.id, function(err, blog){
+  Blog.findById(req.params.id, function(err, blog){
     if(err){
       console.log(err);
     } else {
