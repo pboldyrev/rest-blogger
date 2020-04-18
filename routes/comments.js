@@ -1,21 +1,64 @@
 var express = require("express"),
     router  = express.Router({mergeParams: true}),
     Blog    = require("../models/blogs"),
+    middleware  = require("../middleware"),
     Comment = require("../models/comments");
 
 // Adding a comment page
-router.get("/comments/new", isLoggedIn, function(req, res){
+router.get("/new", middleware.isLoggedIn, function(req, res){
   Blog.findById(req.params.id, function(err, blog){
     if(err){
       console.log(err);
     } else {
-      res.render("comments/new", {blog: blog});
+      res.render("./comments/new", {blog: blog});
+    }
+  });
+});
+
+// Editing a comment page
+router.get("/:comment_id/edit", middleware.checkCommentOwnership, function(req, res){
+  Comment.findById(req.params.comment_id, function(err, comment){
+    if(err){
+      console.log(err);
+    } else {
+      res.render("./comments/edit", {comment: comment, blog_id: req.params.id});
+    }
+  });
+});
+
+// Editing a comment route
+router.put("/:comment_id", middleware.checkCommentOwnership, function(req, res){
+  newComment = {
+    author: {
+      id: req.user.id,
+      username: req.user.username
+    },
+    body: req.sanitize(req.body.body)
+  }
+
+  Comment.findByIdAndUpdate(req.params.comment_id, newComment, function(err, comment){
+    if(err){
+      console.log(err);
+    } else {
+      res.redirect("/blogs/" + req.params.id);
+    }
+  });
+});
+
+// Removing a comment route
+router.delete("/:comment_id", middleware.checkCommentOwnership, function(req, res){
+  Comment.findById(req.params.comment_id, function(err, comment){
+    if(err){
+      console.log(err);
+    } else {
+      comment.remove();
+      res.redirect("/blogs/" + req.params.id);
     }
   });
 });
 
 // Adding a comment route
-router.post("/", isLoggedIn, function(req, res){
+router.post("/", middleware.isLoggedIn, function(req, res){
   Blog.findById(req.params.id).populate("comments").exec(function(err, blog){
     if(err){
       console.log(err);
@@ -37,14 +80,5 @@ router.post("/", isLoggedIn, function(req, res){
     }
   });
 });
-
-// Check if user is logged in
-function isLoggedIn(req, res, next){
-  if(req.isAuthenticated()){
-    return next();
-  } else {
-    res.redirect("/login");
-  }
-}
 
 module.exports = router;

@@ -10,8 +10,8 @@
       <p class="mt-0"><strong>Written by:</strong> <%= blog.author.username %></p>
       <form action="/blogs/<%= blog._id %>?_method=DELETE" method="POST">
         <a href="/blogs" class="btn btn-primary">Go back</a>
-        <% if(user){ %>
-          <a href="/blogs/<%= blog._id %>/edit" class="btn btn-secondary">Edit</a>
+        <% if(user && blog.author.id.equals(user._id)){ %>
+          <a href="<%= blog._id %>/edit" class="btn btn-secondary">Edit</a>
           <button class="btn btn-danger">Delete</button>
         <% } %>
       </form>
@@ -25,6 +25,12 @@
             <p>
               <%= comment.body %>
             </p>
+            <% if(user && comment.author.id.equals(user._id)) { %>
+            <form action="/blogs/<%= blog._id %>/comments/<%= comment.id %>?_method=DELETE" method="POST">
+              <a class="btn btn-sm btn-secondary" href="/blogs/<%= blog._id %>/comments/<%= comment._id %>/edit">Edit</a>
+              <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+            </form>
+            <% } %>
             <hr>
           </div>
         </div>

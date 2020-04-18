@@ -51,5 +51,5 @@ app.use(function(req, res, next){
 // ROUTING CONFIGURATION
 app.use(indexRoutes);
 app.use("/blogs", blogRoutes);
-app.use("/blogs/:id",commentRoutes);
+app.use("/blogs/:id/comments",commentRoutes);
 //

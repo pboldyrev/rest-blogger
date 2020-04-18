@@ -51,13 +51,4 @@ router.get("/logout", function(req, res){
   res.redirect("/blogs");
 })
 
-// Check if user is logged in
-function isLoggedIn(req, res, next){
-  if(req.isAuthenticated()){
-    return next();
-  } else {
-    res.redirect("/login");
-  }
-}
-
 module.exports = router;

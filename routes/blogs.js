@@ -1,6 +1,8 @@
-var express = require("express"),
-    router  = express.Router(),
-    Blog    = require("../models/blogs");
+var express     = require("express"),
+    router      = express.Router(),
+    middleware  = require("../middleware"),
+    Blog        = require("../models/blogs"),
+    Comment     = require("../models/comments");
 
 // Show all blogs
 router.get("/", function(req, res){
@@ -14,7 +16,7 @@ router.get("/", function(req, res){
 });
 
 // Blog create page
-router.get("/new", isLoggedIn, function(req, res){
+router.get("/new", middleware.isLoggedIn, function(req, res){
   res.render("blogs/new");
 });
 
@@ -30,7 +32,7 @@ router.get("/:id", function(req, res){
 });
 
 // Creating a blog route
-router.post("/", isLoggedIn, function(req, res){
+router.post("/", middleware.isLoggedIn, function(req, res){
 
   var author = {
     id: req.user._id,
@@ -55,18 +57,14 @@ router.post("/", isLoggedIn, function(req, res){
 });
 
 // Blog edit page
-router.get("/:id/edit", isLoggedIn, function(req, res){
+router.get("/:id/edit", middleware.checkBlogOwnership, function(req, res){
   Blog.findById(req.params.id, function(err, blog){
-    if(err){
-      console.log(err);
-    } else {
-      res.render("blogs/edit", {blog: blog});
-    }
+    res.render("blogs/edit", {blog: blog});
   });
 });
 
 // Editing a blog route
-router.put("/:id", isLoggedIn, function(req, res){
+router.put("/:id", middleware.checkBlogOwnership, function(req, res){
   title = req.sanitize(req.body.title);
   body = req.sanitize(req.body.body);
 
@@ -81,7 +79,7 @@ router.put("/:id", isLoggedIn, function(req, res){
 
   Blog.findByIdAndUpdate(req.params.id, updatedBlog, function(err, updatedBlog){
     if(err){
-      res.redirect("/blogs");
+      res.redirect("back");
     } else {
       res.redirect("/blogs/" + req.params.id);
     }
@@ -89,23 +87,20 @@ router.put("/:id", isLoggedIn, function(req, res){
 });
 
 // Delete blog route
-router.delete("/:id", isLoggedIn, function(req, res){
-  Blog.findByIdAndRemove(req.params.id, function(err, updatedBlog){
+router.delete("/:id", middleware.checkBlogOwnership, function(req, res){
+  Blog.findByIdAndRemove(req.params.id, function(err, removedBlog){
     if(err){
       console.log(err);
     } else {
-      res.redirect("/blogs");
+      Comment.deleteMany({_id: {$in: removedBlog.comments}}, function(err){
+        if(err){
+          console.log(err);
+        } else {
+          res.redirect("/blogs");
+        }
+      });
     }
   });
 });
-
-// Check if user is logged in
-function isLoggedIn(req, res, next){
-  if(req.isAuthenticated()){
-    return next();
-  } else {
-    res.redirect("/login");
-  }
-}
 
 module.exports = router;
