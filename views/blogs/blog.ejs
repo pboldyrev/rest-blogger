@@ -1,0 +1,45 @@
+<%- include("../partials/header") %>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 p-3 border rounded mb-4">
+      <img src="<%= blog.image %>" alt="" width="100%">
+      <h3 class="pt-4"><%= blog.title %></h3>
+      <p><%= blog.body %></p>
+      <p class="my-0"><strong>Written on:</strong> <%= blog.created.toDateString() %></p>
+      <p class="mt-0"><strong>Written by:</strong> <%= blog.author.username %></p>
+      <form action="/blogs/<%= blog._id %>?_method=DELETE" method="POST">
+        <a href="/blogs" class="btn btn-primary">Go back</a>
+        <% if(user && blog.author.id.equals(user._id)){ %>
+          <a href="<%= blog._id %>/edit" class="btn btn-secondary">Edit</a>
+          <button class="btn btn-danger">Delete</button>
+        <% } %>
+      </form>
+    </div>
+    <div class="col-lg-8 p-3">
+      <% blog.comments.forEach(function(comment){ %>
+        <div class="row">
+          <div class="col-md-12">
+            <strong><%= comment.author.username %></strong>
+            <span class="float-right">10 days ago</span>
+            <p>
+              <%= comment.body %>
+            </p>
+            <% if(user && comment.author.id.equals(user._id)) { %>
+            <form action="/blogs/<%= blog._id %>/comments/<%= comment.id %>?_method=DELETE" method="POST">
+              <a class="btn btn-sm btn-secondary" href="/blogs/<%= blog._id %>/comments/<%= comment._id %>/edit">Edit</a>
+              <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+            </form>
+            <% } %>
+            <hr>
+          </div>
+        </div>
+      <% }); %>
+      <% if(user){ %>
+        <a href="/blogs/<%= blog._id %>/comments/new" class="mb-4 mt-2 btn btn-primary">Add Comment</a>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include("../partials/footer") %>

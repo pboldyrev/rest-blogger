@@ -3,18 +3,45 @@
   <head>
     <meta charset="utf-8">
     <title>Blog Application</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/c5b1bbaabc.js" crossorigin="anonymous"></script>
   </head>
   <body>
-    <nav class="mb-4 navbar navbar-expand-sm navbar-light bg-light">
+    <nav class="mb-4 navbar navbar-expand-lg sticky-top navbar-light bg-light">
       <a class="navbar-brand" href="/">Blog App</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <a class="nav-item nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
-          <a class="nav-item nav-link active" href="/blogs/new">New Blog</a>
-        </div>
+      <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <% if(user){ %>
+          <li class="nav-item">
+            <a class="nav-link" href="/blogs/new">New Post</a>
+          </li>
+          <% } %>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <% if(!user){ %>
+            <li class="nav-item">
+              <a class="nav-link btn btn-primary px-4 mx-1 my-1 text-white" href="/login">Log In</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link btn btn-secondary px-4 mx-1 my-1 text-white" href="/register">Register</a>
+            </li>
+          <% } else { %>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Welcome, <%= user.username %>!</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Log Out</a>
+            </li>
+          <% } %>
+        </ul>
       </div>
     </nav>

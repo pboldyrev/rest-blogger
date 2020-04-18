@@ -1,0 +1,17 @@
+<%- include("../partials/header") %>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <form class="col-lg-6" action="/blogs/<%= blog._id %>/comments" method="POST">
+      <h2>Add comment to <%= blog.title %></h2>
+      <div class="form-group">
+        <label for="body">Comment Body</label>
+        <textarea id="body" name="body" class="form-control" rows="2"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Add comment</button>
+      <a href="/blogs/<%= blog._id %>" class="btn btn-secondary">Go back</a>
+    </form>
+  </div>
+</div>
+
+<%- include("../partials/footer") %>
